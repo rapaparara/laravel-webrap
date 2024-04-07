@@ -1,26 +1,23 @@
 <?php
 
- 
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
 new class extends Component {
-
     #[Validate('required|string|max:255')]
     public $title;
     #[Validate('required')]
     public $content;
- 
+
     public function store(): void
     {
         $validated = $this->validate();
         $validated += ['slug' => 'coba-saja'];
         auth()->user()->posts()->create($validated);
-        
+
         $this->dispatch('posted');
         $this->reset();
-    } 
-
+    }
 }; ?>
 
 <div class="py-12">
@@ -34,17 +31,14 @@ new class extends Component {
                             class="mt-1 block w-full" required autofocus autocomplete="title" />
                         <x-input-error class="mt-2" :messages="$errors->get('title')" />
                     </div>
-
                     <div>
                         <x-input-label for="content" :value="__('Content')" />
-                        <x-text-input wire:model="content" id="content" name="content" type="text"
-                            class="mt-1 block w-full" required autocomplete="content" />
+                        <x-textarea wire:model="content" name="content" id="content" rows="5"
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"></x-textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('content')" />
                     </div>
-
                     <div class="flex items-center gap-4">
                         <x-primary-button>{{ __('Post') }}</x-primary-button>
-
                         <x-action-message class="me-3" on="posted">
                             {{ __('Posted.') }}
                         </x-action-message>
