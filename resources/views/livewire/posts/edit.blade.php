@@ -3,8 +3,10 @@
 use App\Models\Posts; 
 use Livewire\Attributes\Validate; 
 use Livewire\Volt\Component;
+use \Cviebrock\EloquentSluggable\Services\SlugService;
 
 new class extends Component {
+    
     public Posts $post; 
 
     #[Validate('required|string')]
@@ -12,6 +14,7 @@ new class extends Component {
     
     #[Validate('required|string|max:255')]
     public string $title = '';
+    
  
     public function mount(): void
     {
@@ -22,7 +25,7 @@ new class extends Component {
     public function update(): void
     { 
         $validated = $this->validate();
- 
+        $validated += ['slug' => SlugService::createSlug(Posts::class, 'slug', $this->title)];
         $this->post->update($validated);
  
         $this->dispatch('updated');

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\On;
 
 new class extends Component {
-    public Collection $posts;
-
+    public $posts;
     public ?Posts $editing = null;
+
     public function mount(): void
     {
         $this->getPosts();
@@ -24,6 +24,11 @@ new class extends Component {
     public function edit(Posts $post): void
     {
         $this->editing = $post;
+        $this->getPosts();
+    }
+    public function delete(Posts $post): void
+    {
+        $post->delete();
         $this->getPosts();
     }
 
@@ -61,24 +66,29 @@ new class extends Component {
                                 </button>
                             </x-slot>
                             <x-slot name="content">
+                                <x-dropdown-link href="{{ $post->slug }}">
+                                    {{ __('Preview') }}
+                                </x-dropdown-link>
                                 <x-dropdown-link wire:click="edit({{ $post->id }})">
                                     {{ __('Edit') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link wire:click="delete({{ $post->id }})">
+                                    {{ __('Delete') }}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="px-6 py-12 text-gray-900 dark:text-gray-100">
                         <div class="w-full">
                             @if ($post->is($editing))
-                                <h3 class="text-sm mt-2">
+                                <div class="text-sm">
                                     <livewire:posts.edit :post="$post" :key="$post->id" />
-                                </h3>
+                                </div>
                             @else
-                                <h1 class="text-lg font-bold">{{ $post->title }}</h1>
-                                <h3 class="text-sm mt-2">{{ $post->content }}</h3>
+                                <h1 class="mb-3 text-xl font-bold">{{ $post->title }}</h1>
+                                <h3 class="text-sm">{{ $post->content }}</h3>
                             @endif
                         </div>
-
                     </div>
                 </div>
             </div>
