@@ -86,6 +86,7 @@ new class extends Component {
                                 </div>
                             @else
                                 <h1 class="mb-3 text-xl font-bold">{{ $post->title }}</h1>
+                                <img class="mb-3 h-80 w-full object-cover" src="{{ asset('storage/'.$post->image) }}" alt="{{ $post->title }}">
                                 <h3 class="text-sm">{{ $post->content }}</h3>
                             @endif
                         </div>

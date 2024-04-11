@@ -19,8 +19,9 @@ return new class extends Migration
             ->on('users')
             ->restrictOnDelete();
             $table->string('title');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->text('content');
+            $table->text('image');
             $table->timestamps();
         });
     }

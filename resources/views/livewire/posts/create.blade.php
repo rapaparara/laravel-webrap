@@ -2,8 +2,10 @@
 
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
 
 new class extends Component {
+    use WithFileUploads;
 
     #[Validate('required|string|max:255')]
     public $title;
@@ -11,9 +13,13 @@ new class extends Component {
     #[Validate('required')]
     public $content;
 
+    #[Validate('required|mimetypes:image/*|max:512')]
+    public $image;
+
     public function store(): void
     {
         $validated = $this->validate();
+        $validated['image'] = $this->image->store('images', 'public');
         auth()->user()->posts()->create($validated);
         $this->dispatch('posted');
         $this->reset();
@@ -31,14 +37,31 @@ new class extends Component {
                     <div>
                         <x-input-label for="title" :value="__('Title')" />
                         <x-text-input wire:model="title" id="title" name="title" type="text"
-                            class="mt-1 block w-full" required autofocus autocomplete="title" placeholder="Your title here..."/>
+                            class="mt-1 block w-full" required autofocus autocomplete="title"
+                            placeholder="Your title here..." />
                         <x-input-error class="mt-2" :messages="$errors->get('title')" />
                     </div>
                     <div>
                         <x-input-label for="content" :value="__('Content')" />
                         <x-textarea wire:model="content" name="content" id="content" rows="5"
-                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" placeholder="Your content here..."></x-textarea>
+                            class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                            placeholder="Your content here..."></x-textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('content')" />
+                    </div>
+                    <div>
+                        <x-input-label for="image" :value="__('Image')" />
+                        @if($image)
+                        <img class="my-3 h-80 w-full object-cover" src="{{ $image->temporaryUrl() }}" alt="image">
+                        @endif
+                        <input type="file" wire:model="image" name="image" accept="image/*"
+                            class="w-full py-2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                        <p class="mt-1
+                                text-sm text-gray-500 dark:text-gray-300"
+                            id="file_input_help">Only images file under 500KB allowed.</p>
+                        <x-input-error class="mt-2" :messages="$errors->get('image')" />
+                        <div wire:loading wire:target="image"
+                            class="px-3 py-1 text-sm font-medium leading-none text-center text-green-800 bg-green-200 rounded-lg animate-pulse">
+                            Uploading file...</div>
                     </div>
                     <div class="flex items-center gap-4">
                         <x-primary-button>{{ __('Post') }}</x-primary-button>
