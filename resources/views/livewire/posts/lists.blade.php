@@ -29,6 +29,7 @@ new class extends Component {
     public function delete(Posts $post): void
     {
         $post->delete();
+        unlink('storage/' . $post->image);
         $this->getPosts();
     }
 
@@ -37,7 +38,6 @@ new class extends Component {
     public function disableEditing(): void
     {
         $this->editing = null;
-
         $this->getPosts();
     }
 }; ?>
@@ -78,7 +78,7 @@ new class extends Component {
                             </x-slot>
                         </x-dropdown>
                     </div>
-                    <div class="px-6 py-12 text-gray-900 dark:text-gray-100">
+                    <div class="px-6 py-4 text-gray-900 dark:text-gray-100">
                         <div class="w-full">
                             @if ($post->is($editing))
                                 <div class="text-sm">
@@ -87,7 +87,7 @@ new class extends Component {
                             @else
                                 <h1 class="mb-3 text-xl font-bold">{{ $post->title }}</h1>
                                 <img class="mb-3 h-80 w-full object-cover" src="{{ asset('storage/'.$post->image) }}" alt="{{ $post->title }}">
-                                <h3 class="text-sm">{{ $post->content }}</h3>
+                                <h3 class="text-sm">{!! nl2br($post->content) !!}</h3>
                             @endif
                         </div>
                     </div>

@@ -17,8 +17,7 @@ new class extends Component {
     #[Validate('required|string|max:255')]
     public string $title = '';
 
-    public $image_new;
-    public $image;
+    public $image_new,$image;
 
     public function mount(): void
     {
@@ -31,18 +30,17 @@ new class extends Component {
     {
         $validated = $this->validate();
         if (isset($this->image_new)) {
-            $this->validateImage();
+            $this->updateImage();
+            $validated['image'] = $this->image_new->store('images', 'public');
         }
         $validated += ['slug' => SlugService::createSlug(Posts::class, 'slug', $this->title)];
         $this->post->update($validated);
-
         $this->dispatch('updated');
     }
-    public function validateImage()
+    public function updateImage()
     {
-        $this->validate([
-            'image_new' => ['required', 'mimetypes:image/*', 'max:512'],
-        ]);
+        $this->validate([ 'image_new' => ['required', 'mimetypes:image/*', 'max:512'] ]);
+        unlink('storage/' . $this->image);
     }
 
     public function cancel(): void
