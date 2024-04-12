@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::view('/', 'homepage');
 
 Route::get('posts', App\Livewire\Posts::class)->name('posts');
 
